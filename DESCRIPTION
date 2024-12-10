@@ -1,9 +1,10 @@
 Package: msdrought
 Title: Seasonal Mid-Summer Drought Characteristics
-Version: 0.1.0
+Version: 0.1.1
 Authors@R: 
   c(person("Turner", "Uyeda", email = "tuyeda@scu.edu", role = c("aut")),
   person("Ed", "Maurer", email = "emaurer@scu.edu", role = c("aut", "cre", "cph")),
+  person("Iris", "Stewart-Frey", email = "istewartfrey@scu.edu", role = c("aut")),
   person("Kenneth", "Joseph", email = "knjoseph@scu.edu", role = c("aut")),
   person("Alex", "Avila", email = "aaavila@scu.edu", role = c("aut"))
   )
