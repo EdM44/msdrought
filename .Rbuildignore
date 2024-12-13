@@ -3,6 +3,7 @@
 ^data-raw$
 ^LICENSE\.md$
 ^README\.Rmd$
+^NEWS\.Rmd$
 ^cran-comments\.md$
 ^_pkgdown\.yml$
 ^docs$
