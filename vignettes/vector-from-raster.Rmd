@@ -43,9 +43,9 @@ critDates <- msdrought::msdDates(formattedDates)
 
 # Use the terra::app function to apply the bartlett noise filter (msdFilter) to the raster
 # msdFilter = msdFilter(x, window)
-filtered <- terra::app(infile, msdFilter, window = 31, quantity = 2)
+filtered <- suppressWarnings(terra::app(infile, msdFilter, window = 31, quantity = 2))
 
-# Use the terra::app function to apply the bartlett noise filter (msdFilter) to the raster
+# Use the terra::app function to apply the Bartlett noise filter (msdFilter) to the raster
 # msdStats = msdStats(x, dates, fcn)
 intensityPlots <- suppressWarnings(terra::app(filtered, msdStats, critDates, fcn = "intensity"))
 durationPlots <- suppressWarnings(terra::app(filtered, msdStats, critDates, fcn = "duration"))

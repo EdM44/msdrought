@@ -75,7 +75,7 @@ Now, an averaged xts object can be created. This will display the data set's ave
 # Assemble the Timeseries
 timeseriesFrame <- cbind(timeFrame, averagePrecip)
 colnames(timeseriesFrame) <- c("Date", "Precipitation")
-x <- xts(timeseriesFrame$Precipitation, timeseriesFrame$Date) # This produces the "xts" screenshot
+x <- xts::xts(timeseriesFrame$Precipitation, timeseriesFrame$Date) # This produces the "xts" screenshot
 ```
 
 Now, perform the MSD calculations and plot the averaged graph!

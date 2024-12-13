@@ -27,11 +27,13 @@ library(lubridate)
 library(stringr)
 library(ggplot2)
 library(xts)
-data <- system.file("extdata", "prcp_cropped.tif", package = "msdrought") # This loads the data included in the package, but you would attach your own
+
+# This loads the data included in the package, but you would attach your own
+data <- system.file("extdata", "prcp_cropped.tif", package = "msdrought") 
 infile <- terra::rast(data)
 ```
 
-Now we have our raster data loaded in as "infile". Using the terra::app command, we can apply a function to each cell of the data. For the purpose of this vignette, we will be obtaining the **intensity** of each cell, but the MSD package is capable of far more than this. See the ?MSD::msdStats page for more info.
+Now we have our raster data loaded in as "infile". Using the terra::app command, we can apply a function to each cell of the data. For the purpose of this vignette, we will be obtaining the **intensity** of each cell, but the MSD package is capable of far more than this. See the `?MSD::msdStats` page for more info.
 
 Begin by finding the range of dates for the raster data, as these values are needed for the package to understand the statistics. Data processing begins by filtering the data using a bartlett noise filter, then apply the msdStats function to the data.
 
@@ -42,10 +44,10 @@ allDates <- terra::time(infile)
 formattedDates <- as.Date(allDates)
 dates <- msdrought::msdDates(formattedDates)
 
-# Use the terra::app function to apply the bartlett noise filter (msdFilter) to the raster
+# Use the terra::app function to apply the Bartlett noise filter (msdFilter) to the raster
 # msdFilter = msdFilter(x, window)
 filtered <- terra::app(infile, msdFilter, window = 31, quantity = 2)
-terra::time(filtered) <- terra::time(infile)
+#terra::time(filtered) <- terra::time(infile)
 plot(filtered)
 ```
 
