@@ -4,7 +4,6 @@
   list, and documentation locations.
 
 * Results from devtools::check_win_devel()
- + testttt
  + using log directory 'd:/RCompile/CRANguest/R-devel/msdrought.Rcheck'
  + using R Under development (unstable) (2024-12-12 r87438 ucrt)
  + using platform: x86_64-w64-mingw32
