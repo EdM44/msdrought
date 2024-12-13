@@ -107,13 +107,16 @@ the raster using the terra package.</p>
 <span><span class="co">#&gt; The following objects are masked from 'package:base':</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;     as.Date, as.Date.numeric</span></span>
-<span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"prcp_cropped.tif"</span>, package <span class="op">=</span> <span class="st">"msdrought"</span><span class="op">)</span> <span class="co"># This loads the data included in the package, but you would attach your own</span></span>
+<span></span>
+<span><span class="co"># This loads the data included in the package, but you would attach your own</span></span>
+<span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"prcp_cropped.tif"</span>, package <span class="op">=</span> <span class="st">"msdrought"</span><span class="op">)</span> </span>
 <span><span class="va">infile</span> <span class="op">&lt;-</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/rast.html" class="external-link">rast</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span></span></code></pre></div>
 <p>Now we have our raster data loaded in as “infile”. Using the
 terra::app command, we can apply a function to each cell of the data.
 For the purpose of this vignette, we will be obtaining the
 <strong>intensity</strong> of each cell, but the MSD package is capable
-of far more than this. See the ?MSD::msdStats page for more info.</p>
+of far more than this. See the <code>?MSD::msdStats</code> page for more
+info.</p>
 <p>Begin by finding the range of dates for the raster data, as these
 values are needed for the package to understand the statistics. Data
 processing begins by filtering the data using a bartlett noise filter,
@@ -125,10 +128,10 @@ then apply the msdStats function to the data.</p>
 <span><span class="va">formattedDates</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/zoo/man/yearmon.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="va">allDates</span><span class="op">)</span></span>
 <span><span class="va">dates</span> <span class="op">&lt;-</span> <span class="fu">msdrought</span><span class="fu">::</span><span class="fu"><a href="../reference/msdDates.html">msdDates</a></span><span class="op">(</span><span class="va">formattedDates</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Use the terra::app function to apply the bartlett noise filter (msdFilter) to the raster</span></span>
+<span><span class="co"># Use the terra::app function to apply the Bartlett noise filter (msdFilter) to the raster</span></span>
 <span><span class="co"># msdFilter = msdFilter(x, window)</span></span>
 <span><span class="va">filtered</span> <span class="op">&lt;-</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/app.html" class="external-link">app</a></span><span class="op">(</span><span class="va">infile</span>, <span class="va">msdFilter</span>, window <span class="op">=</span> <span class="fl">31</span>, quantity <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
-<span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/time.html" class="external-link">time</a></span><span class="op">(</span><span class="va">filtered</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/time.html" class="external-link">time</a></span><span class="op">(</span><span class="va">infile</span><span class="op">)</span></span>
+<span><span class="co">#terra::time(filtered) &lt;- terra::time(infile)</span></span>
 <span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">filtered</span><span class="op">)</span></span></code></pre></div>
 <p><img src="raster-sample_files/figure-html/unnamed-chunk-3-1.png" width="700"></p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
