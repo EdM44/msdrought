@@ -1,4 +1,5 @@
-url: ~
+url: edm44.github.io/msdrought/
 template:
   bootstrap: 5
+  bootswatch: yeti
 
