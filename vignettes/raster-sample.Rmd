@@ -40,11 +40,10 @@ filtered <- terra::app(infile, msdrought::msdFilter, window = 31, quantity = 2)
 terra::time(filtered) <- formattedDates
 terra::plot(filtered[[1:2]])
 ```
+Calculate the intensity for the spatrast object.
 
 ```{r msd-3a, warning=FALSE}
-# Use the terra::app function to apply the bartlett noise filter (msdFilter) to the raster
-# msdStats = msdStats(x, dates, fcn)
-intensity <- terra::app(filtered, msdrought::msdStats, keyDatesTS, fcn = "intensity")
+intensity <- terra::app(filtered, fun=msdrought::msdStats, dates=keyDatesTS, fcn="intensity")
 year1 <- as.numeric(format.Date(formattedDates[1], "%Y"))
 year2 <- as.numeric(format.Date(formattedDates[length(formattedDates)], "%Y"))
 terra::time(intensity, tstep = "years") <- year1:year2
