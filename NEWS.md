@@ -2,7 +2,7 @@
 
 ## msdrought 0.1.1
 
-- changed URLs and documentation location
+- changed URLs, documentation location
 
 ## msdrought 0.1.0
 

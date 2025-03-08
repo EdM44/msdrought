@@ -12,16 +12,15 @@
 #'
 #' @returns SpatRaster or TimeSeries of Yearly data
 #'
-#' @examples
+#' @export
 #'
+#' @examples
 #' data("timeseries")
 #' ts <- timeseries
 #' dates <- zoo::index(ts)
 #' filteredData <- msdrought::msdFilter(ts, window = 31, quantity = 2)
 #' keyDates <- msdDates(dates)
 #' msdrought::msdStats(filteredData, keyDates, fcn = "duration")
-#'
-#' @export
 #'
 #-----------------------------------------------------------------------------------------------------------------------------------------
 msdStats <- function(x, dates, fcn) {
@@ -88,8 +87,8 @@ msdStats <- function(x, dates, fcn) {
       maxpos2 <- data[maxdex2]
       max1 <- max(maxpos1, na.rm = TRUE)
       max2 <- max(maxpos2, na.rm = TRUE)
-      pos1 <- which.max(maxpos1)
-      pos2 <- which.max(maxpos2)
+      pos1 <- f.which.max(maxpos1)
+      pos2 <- f.which.max(maxpos2)
       index1 <- maxdex1[pos1]
       index2 <- maxdex2[pos2]
       # making sure that the max is the real between january and mindate

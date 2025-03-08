@@ -68,24 +68,70 @@
 
     
     
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/EdM44/msdrought/" class="external-link">msdrought</a></span><span class="op">)</span></span></code></pre></div>
 <p>In general, the msdrought Package works best when the data from a
-specific point in a raster is pulled, converted into an xts object, and
-then analyzed. This vignette will show an alternative approach, when an
-entire raster is analyzed for its duration and intensity values, then a
-single specific point and its corresponding data is extracted to a
-vector. The process for both duration and intensity (as well as any
-other given parameter for the msdStats function) is identical.</p>
+specific point are a raster is pulled, converted into an
+<code>xts</code> object, and then analyzed. This vignette will show an
+alternative approach, when an entire raster is analyzed for its duration
+and intensity values, then a single specific point and its corresponding
+data is extracted to a vector. The process for both duration and
+intensity (as well as any other given parameter for the msdStats
+function) is identical.</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Load the necessary packages and the included data, for the purpose of demonstration</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/" class="external-link">terra</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyr.tidyverse.org" class="external-link">tidyr</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://lubridate.tidyverse.org" class="external-link">lubridate</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://stringr.tidyverse.org" class="external-link">stringr</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://joshuaulrich.github.io/xts/" class="external-link">xts</a></span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># This loads the data included in the package, but you would attach your own</span></span>
+<span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"prcp_cropped.tif"</span>, package <span class="op">=</span> <span class="st">"msdrought"</span><span class="op">)</span> </span>
+<span><span class="va">infile</span> <span class="op">&lt;-</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/rast.html" class="external-link">rast</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span></span></code></pre></div>
 <p>Now we have our raster data loaded in as “infile”. Using the
 terra::app command, we can apply a function to each cell of the data.
 Begin by finding the range of dates for the raster data, as these values
 are needed for the package to understand the statistics. Data processing
 begins by filtering the data using a bartlett noise filter, then apply
 the msdStats function to the data.</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Find the key dates related to the MSD</span></span>
+<span><span class="co"># msdDates = msdDates(x, firstStartDate, firstEndDate, secondStartDate, secondEndDate)</span></span>
+<span><span class="va">formattedDates</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/zoo/man/yearmon.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/time.html" class="external-link">time</a></span><span class="op">(</span><span class="va">infile</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">critDates</span> <span class="op">&lt;-</span> <span class="fu">msdrought</span><span class="fu">::</span><span class="fu"><a href="../reference/msdDates.html">msdDates</a></span><span class="op">(</span><span class="va">formattedDates</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Use the terra::app function to apply the Bartlett noise filter (msdFilter) to the raster</span></span>
+<span><span class="co"># msdFilter = msdFilter(x, window)</span></span>
+<span><span class="va">filtered</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/warning.html" class="external-link">suppressWarnings</a></span><span class="op">(</span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/app.html" class="external-link">app</a></span><span class="op">(</span><span class="va">infile</span>, <span class="va">msdFilter</span>, window <span class="op">=</span> <span class="fl">31</span>, quantity <span class="op">=</span> <span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/time.html" class="external-link">time</a></span><span class="op">(</span><span class="va">filtered</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">formattedDates</span></span>
+<span></span>
+<span><span class="co"># Use the terra::app function to apply the Bartlett noise filter (msdFilter) to the raster</span></span>
+<span><span class="co"># msdStats = msdStats(x, dates, fcn)</span></span>
+<span><span class="va">intensityPlots</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/warning.html" class="external-link">suppressWarnings</a></span><span class="op">(</span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/app.html" class="external-link">app</a></span><span class="op">(</span><span class="va">filtered</span>, <span class="va">msdStats</span>, <span class="va">critDates</span>, fcn <span class="op">=</span> <span class="st">"intensity"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">durationPlots</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/warning.html" class="external-link">suppressWarnings</a></span><span class="op">(</span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/app.html" class="external-link">app</a></span><span class="op">(</span><span class="va">filtered</span>, <span class="va">msdStats</span>, <span class="va">critDates</span>, fcn <span class="op">=</span> <span class="st">"duration"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co"># Note: suppressWarnings hides irrelevant messages that result from the msdFilter output</span></span></code></pre></div>
 <p>The “intensityPlots” and “durationPlots” rasters contain the
 intensity and duration values for every geographical location for both
 of the years of data contained in the original dataset. Now that we have
 all the intensity and duration values, we will extract a single point’s
 data from the new rasters.</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Set up the desired location's longitude and latitude values</span></span>
+<span><span class="va">lon</span> <span class="op">&lt;-</span> <span class="op">-</span><span class="fl">86.2621555581</span> <span class="co"># Longitude of the spatial point we're interested in analyzing</span></span>
+<span><span class="va">lat</span> <span class="op">&lt;-</span> <span class="fl">13.3816217871</span> <span class="co"># Latitude of the spatial point we're interested in analyzing</span></span>
+<span><span class="va">lonLat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>lon <span class="op">=</span> <span class="va">lon</span>, lat <span class="op">=</span> <span class="va">lat</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Set up precipitation data by extracting the data located at our longitude and lattitude</span></span>
+<span><span class="va">location</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/vect.html" class="external-link">vect</a></span><span class="op">(</span><span class="va">lonLat</span>, crs <span class="op">=</span> <span class="st">"+proj=longlat +datum=WGS84"</span><span class="op">)</span></span>
+<span><span class="va">locationIntensity</span> <span class="op">&lt;-</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/extract.html" class="external-link">extract</a></span><span class="op">(</span><span class="va">intensityPlots</span>, <span class="va">location</span>, method <span class="op">=</span> <span class="st">"bilinear"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://rspatial.github.io/terra/reference/subset.html" class="external-link">subset</a></span><span class="op">(</span>select <span class="op">=</span> <span class="op">-</span><span class="va">ID</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://rspatial.github.io/terra/reference/transpose.html" class="external-link">t</a></span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">locationDuration</span> <span class="op">&lt;-</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/extract.html" class="external-link">extract</a></span><span class="op">(</span><span class="va">durationPlots</span>, <span class="va">location</span>, method <span class="op">=</span> <span class="st">"bilinear"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://rspatial.github.io/terra/reference/subset.html" class="external-link">subset</a></span><span class="op">(</span>select <span class="op">=</span> <span class="op">-</span><span class="va">ID</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://rspatial.github.io/terra/reference/transpose.html" class="external-link">t</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p>Now we have converted the “intensityPlots” and “durationPlots”
 rasters to numeric objects called “locationIntensity” and
 “locationDuration”, which represent the intensity and duration values
@@ -97,8 +143,22 @@ combine the two objects together. If we had repeated the process for all
 5 msdStats parameters (“duration”, “intensity”, “firstMaxValue”,
 “secondMaxValue”, or “min”), we could achieve the same output as the
 “Sample-Walkthrough” vignette.</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Pull the years from the data, for the purpose of organizing the data</span></span>
+<span><span class="va">allYears</span> <span class="op">&lt;-</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/time.html" class="external-link">time</a></span><span class="op">(</span><span class="va">infile</span><span class="op">)</span></span>
+<span><span class="va">firstYear</span> <span class="op">&lt;-</span> <span class="fu">lubridate</span><span class="fu">::</span><span class="fu"><a href="https://lubridate.tidyverse.org/reference/year.html" class="external-link">year</a></span><span class="op">(</span><span class="va">allYears</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span></span>
+<span><span class="va">lastYear</span> <span class="op">&lt;-</span> <span class="fu">lubridate</span><span class="fu">::</span><span class="fu"><a href="https://lubridate.tidyverse.org/reference/year.html" class="external-link">year</a></span><span class="op">(</span><span class="va">allYears</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">allYears</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span>
+<span><span class="va">yearsSeq</span> <span class="op">&lt;-</span> <span class="va">firstYear</span><span class="op">:</span><span class="va">lastYear</span></span>
+<span></span>
+<span><span class="co"># Combine the years, intensity and duration objects, for ease of comparison</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>years<span class="op">=</span><span class="va">yearsSeq</span>, </span>
+<span>           durationValue<span class="op">=</span><span class="va">locationDuration</span><span class="op">[</span>,<span class="fl">1</span><span class="op">]</span>, </span>
+<span>           intensityValue<span class="op">=</span><span class="va">locationIntensity</span><span class="op">[</span>,<span class="fl">1</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">##       years durationValue intensityValue</span></span>
+<span><span class="co">## lyr.1  1981      75.23293       6.627172</span></span>
+<span><span class="co">## lyr.2  1982     125.00258       7.992033</span></span></code></pre>
 <p>The output now closely resembles the output format that would be
-achieved if the location was extracted prior to analysis. Pulling the
+achieved if the location were extracted prior to analysis. Pulling the
 remaining stats (“firstMaxValue”, “secondMaxValue”, and “min”) and
 combining those as well would result in an identical result.</p>
   </main>

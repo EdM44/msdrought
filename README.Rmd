@@ -28,10 +28,15 @@ The details are described in "The Mesoamerican mid-summer drought: the impact of
 
 ## Installation
 
-You can install the msdrought package from [CRAN](https://cran.r-project.org/) with:
-
+You can install the msdrought package from [CRAN](https://cran.r-project.org/package=msdrought) with:
 ``` r
 install.packages("msdrought")
+```
+
+Or you can install the development version of this package:
+``` r
+if (!requireNamespace("remotes", quietly = TRUE)) install.packages("remotes")
+remotes::install_github("EdM44/msdrought")
 ```
 
 ## Example
