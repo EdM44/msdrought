@@ -6,6 +6,8 @@
 #'
 #' @param i A vector
 #'
+#' @noRd
+#'
 #' @examples
 #' \dontrun{
 #' f.which.max(1:5)
